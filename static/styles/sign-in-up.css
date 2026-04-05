@@ -1,0 +1,48 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* -------- BACKGROUND -------------- */
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow-y: hidden;
+    background-color: grey;
+}
+/* --------- FORM CONT -------------- */
+#log-in-cont{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 80%;
+    width: 80%;
+    background-color: rgb(36, 36, 58);
+    border: 5px solid black;
+}
+#title{
+    width: 100%;
+    font-size: 40pt;
+    text-align: center;
+    color: darkgoldenrod;
+}
+/* ----------- FORM ----------- */
+#form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: 100%;
+}
+.input_field{
+    width: 60%;
+    margin-bottom: 2.5%;
+    background-color: bisque;
+}
+#sign-in-up{
+    color: whitesmoke;
+    margin-bottom: 2.5%;
+}
