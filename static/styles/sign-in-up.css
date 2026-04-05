@@ -13,7 +13,7 @@ body{
     background-color: grey;
 }
 /* --------- FORM CONT -------------- */
-#log-in-cont{
+#sign-in_up-cont{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,7 +24,7 @@ body{
 }
 #title{
     width: 100%;
-    font-size: 40pt;
+    font-size: 35pt;
     text-align: center;
     color: darkgoldenrod;
 }
@@ -39,10 +39,48 @@ body{
 }
 .input_field{
     width: 60%;
-    margin-bottom: 2.5%;
+    margin-bottom: 1.5%;
+    padding: 1px 2px;
     background-color: bisque;
 }
 #sign-in-up{
     color: whitesmoke;
     margin-bottom: 2.5%;
+}
+
+/* ----------- SIGN IN/UP ---------------- */
+#submit-btn{
+    padding: 1px 4px;
+}
+
+/* ----------- REVIEW PENDING ------------ */
+#text-cont{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80%;
+    width: 80%;
+    background-color: rgb(36, 36, 58);
+    border: 5px solid black;
+}
+#text{
+    width: 100%;
+    font-size: 40pt;
+    text-align: center;
+    color: darkgoldenrod;
+}
+#refresh{
+    position: absolute;
+    top: 15%;
+    right: 15%;
+    padding: 6px 7px;
+}
+
+
+/* --------- ERRORS ---------- */
+#alert{
+    position: absolute;
+    top: 2.5%;
+    left: 2.5%;
 }

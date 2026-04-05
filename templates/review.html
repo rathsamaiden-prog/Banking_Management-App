@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles/sign-in-up.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="text-cont">
+        <h1 id="text">Your account is currently pending review. Allow 5 - 15 min for your request to be processed.</h1>
+        <form action="/check_status" method="POST">
+            <input type="submit" name="refresh" id="refresh" value="&#10227" title="Refresh status">
+        </form>
+    </div>
+</body>
+</html>

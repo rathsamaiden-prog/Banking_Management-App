@@ -1,3 +1,4 @@
+DROP DATABASE bankdb;
 CREATE DATABASE bankdb;
 USE bankdb;
 
@@ -7,9 +8,9 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    ssn VARCHAR(11) UNIQUE NOT NULL,
-    address TEXT NOT NULL,
-    phone VARCHAR(15),
+    ssn VARCHAR(255) UNIQUE NOT NULL,
+    address VARCHAR(50) NOT NULL,
+    phone CHAR(14),
     status VARCHAR(8) DEFAULT 'pending'
 ) ENGINE=InnoDB;
 
@@ -29,7 +30,7 @@ CREATE TABLE bank_accounts (
 
 CREATE TABLE cards (
     card_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
-    user_id INT UNIQUE NOT NULL,
+    user_id INT NOT NULL,
     card_number VARCHAR(16) NOT NULL,
     expiry_date VARCHAR(5) NOT NULL,
     ccv VARCHAR(4) NOT NULL,
