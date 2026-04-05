@@ -23,4 +23,6 @@ SELECT * FROM bank_accounts;
 SELECT * FROM cards;
 SELECT * FROM users;
 
+delete from users where user_id = 10;
+
 delete from users where user_id = 2;

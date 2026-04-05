@@ -19,11 +19,13 @@ def index():
             return render_template('index.html')
         data = dict(request.form)
         data['password'] = ph.hash(data['password'])
-        data['ssn'] = ph.hash(data['ssn'])
         conn.execute(text('INSERT INTO users (username, password, first_name, last_name, ssn, address, phone) VALUES (:username, :password, :f_name, :l_name, :ssn, :address, :phone)'), data)
         conn.commit()
-        session['user_id'] = conn.execute(text('SELECT user_id FROM users WHERE ssn=:ssn'),{'ssn':data['ssn']})
+        session['user_id'] = conn.execute(text('SELECT user_id FROM users WHERE ssn=:ssn'), data).fetchone()[0]
+        print('user_id')
         session['role'] = 'user'
+        print('role')
+        return redirect('/check_status')
     else:
         return render_template('index.html')
     
@@ -34,32 +36,39 @@ def log_in():
             return render_template('index.html')
         data = dict(request.form)
         try:
-            hashedPass = conn.execute(text('SELECT password FROM users WHERE email=:email'), data)
+            hashedUsers = conn.execute(text('SELECT username, password FROM users')).fetchall()
+            hashedAdmin = conn.execute(text('SELECT username, password FROM admin')).fetchone()
+            if any(ph.verify(hp.password, data['password']) and hp.username == data['username'] for hp in hashedUsers):
+                user_id = conn.execute(text('SELECT user_id FROM users WHERE username=:username'), data).fetchone()[0]
+            elif ph.verify(hashedAdmin[1],data['password']) and hashedAdmin[0] == data['username']:
+                user_id = conn.execute(text('SELECT admin_id FROM admin WHERE username=:username'), data).fetchone()[0]
+                session['user_id'] = user_id
+                session['role'] = 'admin'
+                return redirect('/admin_page')
         except Exception:
-            flash('Email not recognized. Please try again', 'error')
+            flash('Password or username not recognized. Please try again', 'error')
             return render_template('log-in.html')
-        status = conn.execute(text('SELECT status FROM users WHERE email=:email'), data)
+        status = conn.execute(text('SELECT status FROM users WHERE user_id=:user_id'), {'user_id':user_id}).fetchone()[0]
         if status == 'pending':
             return redirect('/check_status')
-        try:
-            ph.verify(hashedPass, data['password'])
-        except Exception:
-            flash('Password not recognized. Please try again', 'error')
-            return render_template('log-in.html')
-        session['user_id'] = conn.execute(text('SELECT user_id FROM users WHERE ssn=:ssn'),{'ssn':data['ssn']})
+        session['user_id'] = user_id
         session['role'] = 'user'
-        return redirect('/user_page')
+        return redirect('/my_account_page')
     else:
         return render_template('log-in.html')
 
 @app.route('/check_status', methods=['GET','POST'])
 def check_status():
     if request.method == 'POST':
-        status = conn.execute(text('SELECT status FROM users WHERE user_id=:user_id'), {'user_id':session.get('user_id')})
-        if status == 'pending':
-            return render_template('review.html')
-        else:
-            return render_template('log-in.html')
+        try:
+            status = conn.execute(text('SELECT status FROM users WHERE user_id=:user_id'), {'user_id':session.get('user_id')}).fetchone()[0]
+            if status == 'pending':
+                return render_template('review.html')
+            else:
+                return redirect('/log_in')
+        except Exception:
+            flash('Session ended.', 'error')
+            return redirect('/log_in')
     else:
         return render_template('review.html')
 
@@ -92,7 +101,7 @@ def errorDetect():
     return check
     
 # ------------- USER PAGE ----------------
-@app.route('/user_page', methods=['GET','POST'])
+@app.route('/my_account_page', methods=['GET','POST'])
 def user_page():
     return
 
