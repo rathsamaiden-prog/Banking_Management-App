@@ -1,28 +1,29 @@
 USE bankdb;
 
+-- HASHED PASSWORD IS Pass123$
 INSERT INTO users (username, password, first_name, last_name, ssn, address, phone, status) VALUES
-('jdoe', 'hashed_pw1', 'John', 'Doe', '123-45-6789', '123 Main St, NY', '555-1234', 'approved'),
-('asmith', 'hashed_pw2', 'Alice', 'Smith', '987-65-4321', '456 Oak Ave, CA', '555-5678', 'approved'),
-('bwayne', 'hashed_pw3', 'Bruce', 'Wayne', '111-22-3333', '1007 Mountain Dr, Gotham', '555-0000', 'pending');
+('jdoe', '$argon2id$v=19$m=65536,t=3,p=4$UpQAaUwimrLsmG1XrIXJQw$WnoTLTDtIV7NyARC8StuAOCJSA+BXWccwVvQg315G2Q', 'John', 'Doe', '123-45-6789', '123 Main St, NY', '555-1234', 'pending'),
+('asmith', '$argon2id$v=19$m=65536,t=3,p=4$UpQAaUwimrLsmG1XrIXJQw$WnoTLTDtIV7NyARC8StuAOCJSA+BXWccwVvQg315G2Q', 'Alice', 'Smith', '987-65-4321', '456 Oak Ave, CA', '555-5678', 'pending'),
+('bwayne', '$argon2id$v=19$m=65536,t=3,p=4$UpQAaUwimrLsmG1XrIXJQw$WnoTLTDtIV7NyARC8StuAOCJSA+BXWccwVvQg315G2Q', 'Bruce', 'Wayne', '111-22-3333', '1007 Mountain Dr, Gotham', '555-0000', 'pending');
 
+-- HASHED PASSWORD IS Admin$$$
 INSERT INTO admin (admin_id, username, password) VALUES
-(1, 'admin', '$argon2id$v=19$m=65536,t=3,p=4$s0rpGvRTf0JKgqfbvUNZug$/MCFfcCJW8tls2t9NinjmMw4IMexwmC6uolDOTEmxlA');
+(1, 'admin', '$argon2id$v=19$m=65536,t=3,p=4$A+vUG+lNGvXFFB5s80hmDw$4yg2TugPD7SAqOuFgq0OUKoms+b3XcF3gVvtTifgicE');
 
 INSERT INTO bank_accounts (account_number, user_id, balance) VALUES
-(100001, 1, 1500.75),
-(100002, 2, 3200.50),
-(100003, 3, 500.00);
+(10001, 1, 0.00),
+(10002, 2, 0.00),
+(10003, 3, 0.00);
 
 INSERT INTO cards (user_id, card_number, expiry_date, ccv) VALUES
-(1, '4111111111111111', '12/27', '123'),
-(2, '5500000000000004', '11/26', '456'),
-(3, '340000000000009', '10/25', '789');
+(1, '4111 1111 1111 1111', '12/27', '123'),
+(2, '5500 0000 0000 0004', '11/26', '456'),
+(3, '3400 0000 0000 0091', '10/30', '789');
 
 SELECT * FROM admin;
 SELECT * FROM bank_accounts;
 SELECT * FROM cards;
 SELECT * FROM users;
 
-delete from users where user_id = 10;
-
-delete from users where user_id = 2;
+delete from users where user_id = 16;
+update users set status = 'approved' Where user_id = 17;

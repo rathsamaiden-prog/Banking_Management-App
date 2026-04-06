@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles/user_page.css">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="POST">
+        <input type="submit" name="account" value="&#x1F464" id="account-btn">
+    </form>
+    <div class="user-func-wrapper">
+        <div class="user-func-cont">
+            <div class="balance-transaction-cont">
+                <div id="balance-cont">
+                    <h3 id="banking-num">Banking #: 1234567890</h3>
+                    <h1 id="balance">$500.00</h1>
+                </div>
+                <form action="" method="POST" id="transaction-cont">
+                    <input type="text" name="cardHolder" placeholder="FROM" id="from">
+                    <ion-icon name="send-outline"></ion-icon>
+                    <input type="text" name="recipient" placeholder="TO" id="to">
+                    <input type="submit" name="send" value="Send" id="send">
+                </form>
+            </div>
+            <div class="card-deposit-cont">
+                <form action="" method="POST" id="card-cont">
+                    <div class="card debit-card">
+                        <input type="submit" name="use-card" value="Add Money" class="add-money-btn">
+                        <p class="card-type">DEBIT CARD</p>
+                        <p class="bank-title">FLASK BANK</p>
+                        <img src="../static/images/card-chip.png" alt="" class="card-chip">
+                        <p class="card-num">1111 2222 3333 4444</p>
+                        <p class="card-cvv">123</p>
+                        <p class="valid-thru">VALID THRU</p>
+                        <p class="card-date">12/27</p>
+                        <p class="cardholder">JOHN DOE</p>
+                    </div>
+                    <div class="card credit-card">
+                        <input type="submit" name="use-card" value="Add Money" class="add-money-btn">
+                        <p class="card-type">CREDIT CARD</p>
+                        <p class="bank-title">FLASK BANK</p>
+                        <img src="../static/images/card-chip.png" alt="" class="card-chip">
+                        <p class="card-num">1111 2222 3333 4444</p>
+                        <p class="card-cvv">123</p>
+                        <p class="valid-thru">VALID THRU</p>
+                        <p class="card-date">12/27</p>
+                        <p class="cardholder">JOHN DOE</p>
+                    </div>
+                </form>
+                <form action="" method="POST" id="deposit-cont">
+                    <input type="text" name="card_number" id="card_num" class="card-input" placeholder="XXXX XXXX XXXX XXXX" pattern="\d{4}\d{4}\d{4}\d{4}" required>
+                    <input type="text" name="date" id="date" class="card-input" placeholder="MM/YY" pattern="\d{2}/\d{2}" required>
+                    <input type="text" name="cvv" id="cvv" class="card-input" placeholder="123 or 1234" pattern="\d{3,4}" maxlength="4" required>
+                    <input type="text" name="deposit-amount" id="depo-amt" class="card-input" placeholder="$0.00" pattern="^\$\d{1,12}(\.\d{2})?$" required>
+                    <input type="submit" name="add-amt" id="add-amt" value="Add Money">
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+<script>  // formatting for card information
+    document.getElementById('card_num').addEventListener('input', (e) => {
+        let digits = e.target.value.replace(/\D/g, '').substring(0, 16)
+        let groups = digits.match(/(\d{1,4})/g)
+        e.target.value = groups ? groups.join(' ') : ''
+    })
+
+    document.getElementById('date').addEventListener('input', (e) => {
+        let date = e.target.value.replace(/\D/g, '')
+        date = date.substring(0, 4)
+        if (date.length >= 3) {
+            e.target.value = date.substring(0, 2) + '/' + date.substring(2)
+        } else {
+            e.target.value = date
+        }
+    })
+
+    document.getElementById('depo-amt').addEventListener('input', (e) => {
+        let value = e.target.value.replace(/[^\d.]/g, '')
+        let parts = value.split('.')
+        if (parts.length > 2) parts = [parts[0], parts.slice(1).join('')]
+        parts[0] = parts[0].substring(0, 12)
+        if (parts[1] !== undefined) {
+            parts[1] = parts[1].substring(0, 2)
+        }
+        if (parts[0] === '' && parts[1] === undefined) {
+            e.target.value = ''
+            return
+        }
+        e.target.value = '$' + parts[0] + (parts[1] !== undefined ? '.' + parts[1] : '')
+    })
+</script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

@@ -6,7 +6,6 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 ph = PasswordHasher()
 
-
 conn_str = 'mysql://root:cset155@localhost/bankdb'
 engine = create_engine(conn_str, echo=False)
 conn = engine.connect()
@@ -22,9 +21,7 @@ def index():
         conn.execute(text('INSERT INTO users (username, password, first_name, last_name, ssn, address, phone) VALUES (:username, :password, :f_name, :l_name, :ssn, :address, :phone)'), data)
         conn.commit()
         session['user_id'] = conn.execute(text('SELECT user_id FROM users WHERE ssn=:ssn'), data).fetchone()[0]
-        print('user_id')
         session['role'] = 'user'
-        print('role')
         return redirect('/check_status')
     else:
         return render_template('index.html')
@@ -103,7 +100,9 @@ def errorDetect():
 # ------------- USER PAGE ----------------
 @app.route('/my_account_page', methods=['GET','POST'])
 def user_page():
-    return
+    bank_acc = conn.execute(text('SELECT * FROM bank_accounts WHERE user_id=:user_id'),{'user_id':session.get('user_id')})
+    cards = conn.execute(text('SELECT '))
+    return render_template('user_page.html')
 
 # ------------- ADMIN PAGE ----------------
 

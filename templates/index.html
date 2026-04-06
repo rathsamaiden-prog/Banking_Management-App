@@ -38,16 +38,15 @@
     
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const input = document.getElementById('phone')
-        input.addEventListener('input', (e) => {
-        let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/)
-        e.target.value = !x[2] ? x[1] : `(${x[1]}) ${x[2]}${x[3] ? '-' + x[3] : ''}`
+    document.getElementById('phone').addEventListener('input', function(e){
+        let phNum = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/)
+        e.target.value = !phNum[2] ? phNum[1] : `(${phNum[1]}) ${phNum[2]}${phNum[3] ? '-' + phNum[3] : ''}`
     })
 
     document.getElementById('ssn').addEventListener('input', function (e) {
-        let value = e.target.value.replace(/\D/g, '')
-        if (value.length > 9) value = value.slice(0, 9)
-        let formatted = value.replace(/^(\d{3})(\d{0,2})(\d{0,4})/, (match, p1, p2, p3) => {
+        let ssn = e.target.value.replace(/\D/g, '')
+        if (ssn.length > 9) ssn = ssn.slice(0, 9)
+        let formatted = ssn.replace(/^(\d{3})(\d{0,2})(\d{0,4})/, (match, p1, p2, p3) => {
             let res = p1
             if (p2) res += '-' + p2
             if (p3) res += '-' + p3
