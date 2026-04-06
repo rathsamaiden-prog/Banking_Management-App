@@ -15,15 +15,20 @@ INSERT INTO bank_accounts (account_number, user_id, balance) VALUES
 (10002, 2, 0.00),
 (10003, 3, 0.00);
 
-INSERT INTO cards (user_id, card_number, expiry_date, ccv) VALUES
+INSERT INTO cards (user_id, card_number, expiry_date, cvv) VALUES
 (1, '4111 1111 1111 1111', '12/27', '123'),
 (2, '5500 0000 0000 0004', '11/26', '456'),
 (3, '3400 0000 0000 0091', '10/30', '789');
+
+INSERT INTO cards (user_id, card_number, expiry_date, cvv) VALUES
+(1, '4222 2222 2222 2222', '01/30', '1234');
 
 SELECT * FROM admin;
 SELECT * FROM bank_accounts;
 SELECT * FROM cards;
 SELECT * FROM users;
 
-delete from users where user_id = 16;
-update users set status = 'approved' Where user_id = 17;
+delete from cards where card_id = 13;
+update bank_accounts set balance = 0 Where user_id = 1;
+
+SELECT c.*, concat(u.first_name,' ',u.last_name) name FROM cards c JOIN users u USING (user_id) WHERE user_id = 1;

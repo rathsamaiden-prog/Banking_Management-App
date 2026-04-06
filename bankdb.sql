@@ -33,7 +33,7 @@ CREATE TABLE cards (
     user_id INT NOT NULL,
     card_number VARCHAR(20) NOT NULL,
     expiry_date VARCHAR(5) NOT NULL,
-    ccv VARCHAR(4) NOT NULL,
+    cvv VARCHAR(4) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;

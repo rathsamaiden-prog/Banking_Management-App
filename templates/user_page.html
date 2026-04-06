@@ -14,45 +14,61 @@
         <div class="user-func-cont">
             <div class="balance-transaction-cont">
                 <div id="balance-cont">
-                    <h3 id="banking-num">Banking #: 1234567890</h3>
-                    <h1 id="balance">$500.00</h1>
+                    <h3 id="banking-num">Banking #: {{ bank_acc.account_number }}</h3>
+                    <h1 id="balance">${{ bank_acc.balance }}</h1>
                 </div>
-                <form action="" method="POST" id="transaction-cont">
-                    <input type="text" name="cardHolder" placeholder="FROM" id="from">
+                <form action="/send_money" method="POST" id="transaction-cont">
+                    <input type="text" name="cardHolder" value="{{ bank_acc.account_number }}" id="from" disabled>
                     <ion-icon name="send-outline"></ion-icon>
                     <input type="text" name="recipient" placeholder="TO" id="to">
+                    <input type="text" name="send-amount" id="send-amt" placeholder="$0.00" pattern="^\$\d{1,12}(\.\d{2})?$" required>
                     <input type="submit" name="send" value="Send" id="send">
                 </form>
             </div>
             <div class="card-deposit-cont">
-                <form action="" method="POST" id="card-cont">
-                    <div class="card debit-card">
-                        <input type="submit" name="use-card" value="Add Money" class="add-money-btn">
-                        <p class="card-type">DEBIT CARD</p>
-                        <p class="bank-title">FLASK BANK</p>
-                        <img src="../static/images/card-chip.png" alt="" class="card-chip">
-                        <p class="card-num">1111 2222 3333 4444</p>
-                        <p class="card-cvv">123</p>
-                        <p class="valid-thru">VALID THRU</p>
-                        <p class="card-date">12/27</p>
-                        <p class="cardholder">JOHN DOE</p>
-                    </div>
-                    <div class="card credit-card">
-                        <input type="submit" name="use-card" value="Add Money" class="add-money-btn">
-                        <p class="card-type">CREDIT CARD</p>
-                        <p class="bank-title">FLASK BANK</p>
-                        <img src="../static/images/card-chip.png" alt="" class="card-chip">
-                        <p class="card-num">1111 2222 3333 4444</p>
-                        <p class="card-cvv">123</p>
-                        <p class="valid-thru">VALID THRU</p>
-                        <p class="card-date">12/27</p>
-                        <p class="cardholder">JOHN DOE</p>
-                    </div>
-                </form>
-                <form action="" method="POST" id="deposit-cont">
-                    <input type="text" name="card_number" id="card_num" class="card-input" placeholder="XXXX XXXX XXXX XXXX" pattern="\d{4}\d{4}\d{4}\d{4}" required>
-                    <input type="text" name="date" id="date" class="card-input" placeholder="MM/YY" pattern="\d{2}/\d{2}" required>
-                    <input type="text" name="cvv" id="cvv" class="card-input" placeholder="123 or 1234" pattern="\d{3,4}" maxlength="4" required>
+                <div class="cards-cont">
+                    {% for card in cards %}
+                        {% if card.cvv|length == 3 %}
+                            <form action="/add_card/{{ card.card_number }}" method="POST" id="card-cont">
+                                <div class="card debit-card">
+                                    <input type="submit" name="use-card" value="Use Card" class="add-money-btn">
+                                    <p class="card-type">DEBIT CARD</p>
+                                    <p class="bank-title">FLASK BANK</p>
+                                    <img src="../static/images/card-chip.png" alt="" class="card-chip">
+                                    <p class="card-num">{{ card.card_number }}</p>
+                                    <p class="card-cvv">{{ card.cvv }}</p>
+                                    <p class="valid-thru">VALID THRU</p>
+                                    <p class="card-date">{{ card.expiry_date }}</p>
+                                    <p class="cardholder">{{ card.name }}</p>
+                                </div>
+                            </form>
+                        {% else %}
+                            <form action="/add_card/{{ card.card_number }}" method="POST" id="card-cont">
+                                <div class="card credit-card">
+                                    <input type="submit" name="use-card" value="Use Card" class="add-money-btn">
+                                    <p class="card-type">CREDIT CARD</p>
+                                    <p class="bank-title">FLASK BANK</p>
+                                    <img src="../static/images/card-chip.png" alt="" class="card-chip">
+                                    <p class="card-num">{{ card.card_number }}</p>
+                                    <p class="card-cvv">{{ card.cvv }}</p>
+                                    <p class="valid-thru">VALID THRU</p>
+                                    <p class="card-date">{{ card.expiry_date }}</p>
+                                    <p class="cardholder">{{ card.name }}</p>
+                                </div>
+                            </form>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <form action="/add_money" method="POST" id="deposit-cont">
+                    {% if add_card is not defined %}
+                        <input type="text" name="card_number" id="card_num" class="card-input" placeholder="XXXX XXXX XXXX XXXX" pattern="\d{4} \d{4} \d{4} \d{4}" required>
+                        <input type="text" name="date" id="date" class="card-input" placeholder="MM/YY" pattern="\d{2}/\d{2}" required>
+                        <input type="text" name="cvv" id="cvv" class="card-input" placeholder="123 or 1234" pattern="\d{3,4}" maxlength="4" required>
+                    {% else %}
+                        <input type="text" name="card_number" id="card_num" class="card-input" value="{{ add_card.card_number }}" placeholder="XXXX XXXX XXXX XXXX" pattern="\d{4} \d{4} \d{4} \d{4}" required>
+                        <input type="text" name="date" id="date" class="card-input" value="{{ add_card.expiry_date }}" placeholder="MM/YY" pattern="\d{2}/\d{2}" required>
+                        <input type="text" name="cvv" id="cvv" class="card-input" value="{{ add_card.cvv }}" placeholder="123 or 1234" pattern="\d{3,4}" maxlength="4" required>
+                    {% endif %}
                     <input type="text" name="deposit-amount" id="depo-amt" class="card-input" placeholder="$0.00" pattern="^\$\d{1,12}(\.\d{2})?$" required>
                     <input type="submit" name="add-amt" id="add-amt" value="Add Money">
                 </form>
@@ -79,6 +95,21 @@
     })
 
     document.getElementById('depo-amt').addEventListener('input', (e) => {
+        let value = e.target.value.replace(/[^\d.]/g, '')
+        let parts = value.split('.')
+        if (parts.length > 2) parts = [parts[0], parts.slice(1).join('')]
+        parts[0] = parts[0].substring(0, 12)
+        if (parts[1] !== undefined) {
+            parts[1] = parts[1].substring(0, 2)
+        }
+        if (parts[0] === '' && parts[1] === undefined) {
+            e.target.value = ''
+            return
+        }
+        e.target.value = '$' + parts[0] + (parts[1] !== undefined ? '.' + parts[1] : '')
+    })
+
+    document.getElementById('send-amt').addEventListener('input', (e) => {
         let value = e.target.value.replace(/[^\d.]/g, '')
         let parts = value.split('.')
         if (parts.length > 2) parts = [parts[0], parts.slice(1).join('')]

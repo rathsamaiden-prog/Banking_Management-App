@@ -100,10 +100,49 @@ def errorDetect():
 # ------------- USER PAGE ----------------
 @app.route('/my_account_page', methods=['GET','POST'])
 def user_page():
-    bank_acc = conn.execute(text('SELECT * FROM bank_accounts WHERE user_id=:user_id'),{'user_id':session.get('user_id')})
-    cards = conn.execute(text('SELECT '))
-    return render_template('user_page.html')
+    bank_acc = conn.execute(text('SELECT * FROM bank_accounts WHERE user_id=:user_id'),{'user_id':session.get('user_id')}).fetchone()
+    cards = conn.execute(text('SELECT c.*, CONCAT(u.first_name, \' \', u.last_name) AS name FROM cards AS c JOIN users AS u USING (user_id) WHERE user_id=:user_id;'),{'user_id':session.get('user_id')}).fetchall()
+    return render_template('user_page.html', bank_acc=bank_acc, cards=cards)
 
+@app.route('/add_card/<string:card_num>', methods=['POST'])
+def add_card(card_num):
+    bank_acc = conn.execute(text('SELECT * FROM bank_accounts WHERE user_id=:user_id'),{'user_id':session.get('user_id')}).fetchone()
+    cards = conn.execute(text('SELECT c.*, CONCAT(u.first_name, \' \', u.last_name) AS name FROM cards AS c JOIN users AS u USING (user_id) WHERE user_id=:user_id;'),{'user_id':session.get('user_id')}).fetchall()
+    add_card = conn.execute(text('SELECT c.*, CONCAT(u.first_name, \' \', u.last_name) AS name FROM cards AS c JOIN users AS u USING (user_id) WHERE user_id=:user_id and card_number=:card_num;'),{'user_id':session.get('user_id'), 'card_num':card_num}).fetchone()
+    return render_template('user_page.html', bank_acc=bank_acc, cards=cards, add_card=add_card)
+
+@app.route('/add_money', methods=['POST'])
+def add_money():
+    add_card = dict(request.form)
+    owned_cards = conn.execute(text('SELECT card_number FROM cards WHERE user_id=:user_id'),{'user_id':session.get('user_id')}).fetchall()
+    owned_card_numbers = [row[0] for row in owned_cards]
+    if add_card['card_number'] not in owned_card_numbers:
+        card_num = add_card['card_number'][:4]+' '+add_card['card_number'][4:8]+' '+add_card['card_number'][8:12]+' '+add_card['card_number'][12:16]
+        conn.execute(text('INSERT INTO cards (user_id, card_number, expiry_date, cvv) VALUES (:user_id, :card_number, :date, :cvv)'), {'user_id':session.get('user_id'), 'card_number':card_num, 'date':add_card['date'], 'cvv':add_card['cvv']})
+        conn.commit()
+    deposit = dict(request.form)['deposit-amount']
+    conn.execute(text('UPDATE bank_accounts SET balance = balance + :deposit WHERE user_id=:user_id'),{'deposit':deposit[1:], 'user_id':session.get('user_id')})
+    conn.commit()
+    bank_acc = conn.execute(text('SELECT * FROM bank_accounts WHERE user_id=:user_id'),{'user_id':session.get('user_id')}).fetchone()
+    cards = conn.execute(text('SELECT c.*, CONCAT(u.first_name, \' \', u.last_name) AS name FROM cards AS c JOIN users AS u USING (user_id) WHERE user_id=:user_id;'),{'user_id':session.get('user_id')}).fetchall()
+    return render_template('user_page.html', bank_acc=bank_acc, cards=cards)
+
+@app.route('/send_money', methods=['POST'])
+def send_money():
+    data = dict(request.form)
+    balance = conn.execute(text('SELECT balance FROM bank_accounts WHERE user_id=:user_id'),{'user_id':session.get('user_id')}).fetchone()[0]
+    if balance >= float(data['send-amount'][1:]):
+        try:
+            conn.execute(text('UPDATE bank_accounts SET balance = balance - :credit WHERE user_id=:user_id'),{'credit':data['send-amount'][1:], 'user_id':session.get('user_id')})
+            conn.commit()
+            recipient_id = conn.execute(text('SELECT user_id FROM bank_accounts WHERE account_number=:account_number'),{'account_number':data['recipient']}).fetchone()[0]
+            conn.execute(text('UPDATE bank_accounts SET balance = balance + :deposit WHERE user_id=:user_id'),{'deposit':data['send-amount'][1:], 'user_id':recipient_id})
+            conn.commit()
+        except Exception:
+            print('')
+    bank_acc = conn.execute(text('SELECT * FROM bank_accounts WHERE user_id=:user_id'),{'user_id':session.get('user_id')}).fetchone()
+    cards = conn.execute(text('SELECT c.*, CONCAT(u.first_name, \' \', u.last_name) AS name FROM cards AS c JOIN users AS u USING (user_id) WHERE user_id=:user_id;'),{'user_id':session.get('user_id')}).fetchall()
+    return render_template('user_page.html', bank_acc=bank_acc, cards=cards)
 # ------------- ADMIN PAGE ----------------
 
 
