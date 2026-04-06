@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles/view_acc.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="acc-detail-cont">
+        {% for user in users_data %}
+            <h3>User ID</h3>
+            <input type="text" value="{{ user.user_id }}" class="acc-input" disabled>
+            <h3>Username</h3>
+            <input type="text" value="{{ user.username }}" class="acc-input" disabled>
+            <h3>Password</h3>
+            <input type="text" value="********" class="acc-input" disabled>
+            <h3>First Name</h3>
+            <input type="text" value="{{ user.first_name }}" class="acc-input" disabled>
+            <h3>Last Name</h3>
+            <input type="text" value="{{ user.last_name }}" class="acc-input" disabled>
+            <h3>SSN</h3>
+            <input type="text" value="{{ user.ssn }}" class="acc-input" disabled>
+            <h3>Address</h3>
+            <input type="text" value="{{ user.address }}" class="acc-input" disabled>
+            <h3>Phone Number</h3>
+            <input type="text" value="{{ user.phone }}" class="acc-input" disabled>
+            <div class="submit-btns">
+                <form action="/reject_app/{{ user.user_id }}" method="POST">
+                    <input type="submit" name="reject" value="Reject" class="admin-funcs">
+                </form>
+                <form action="/approve_app/{{ user.user_id }}" method="POST">
+                    <input type="submit" name="approve" value="Approve" class="admin-funcs">
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+        
+</body>
+</html>

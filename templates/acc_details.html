@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles/view_acc.css">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/my_account_page" method="POST">
+        <input type="submit" name="account" value="&#x1F464" id="account-btn">
+    </form>
+    <div class="acc-detail-cont">
+        <h3>Username</h3>
+        <input type="text" value="{{ user_data.username }}" class="acc-input" disabled>
+        <h3>Password</h3>
+        <input type="text" value="********" class="acc-input" disabled>
+        <h3>First Name</h3>
+        <input type="text" value="{{ user_data.first_name }}" class="acc-input" disabled>
+        <h3>Last Name</h3>
+        <input type="text" value="{{ user_data.last_name }}" class="acc-input" disabled>
+        <h3>SSN</h3>
+        <input type="text" value="{{ user_data.ssn }}" class="acc-input" disabled>
+        <h3>Address</h3>
+        <input type="text" value="{{ user_data.address }}" class="acc-input" disabled>
+        <h3>Phone Number</h3>
+        <input type="text" value="{{ user_data.phone }}" class="acc-input" disabled>
+    </div>
+</body>
+</html>

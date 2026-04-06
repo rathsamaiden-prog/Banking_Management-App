@@ -2,9 +2,9 @@ USE bankdb;
 
 -- HASHED PASSWORD IS Pass123$
 INSERT INTO users (username, password, first_name, last_name, ssn, address, phone, status) VALUES
-('jdoe', '$argon2id$v=19$m=65536,t=3,p=4$UpQAaUwimrLsmG1XrIXJQw$WnoTLTDtIV7NyARC8StuAOCJSA+BXWccwVvQg315G2Q', 'John', 'Doe', '123-45-6789', '123 Main St, NY', '555-1234', 'pending'),
-('asmith', '$argon2id$v=19$m=65536,t=3,p=4$UpQAaUwimrLsmG1XrIXJQw$WnoTLTDtIV7NyARC8StuAOCJSA+BXWccwVvQg315G2Q', 'Alice', 'Smith', '987-65-4321', '456 Oak Ave, CA', '555-5678', 'pending'),
-('bwayne', '$argon2id$v=19$m=65536,t=3,p=4$UpQAaUwimrLsmG1XrIXJQw$WnoTLTDtIV7NyARC8StuAOCJSA+BXWccwVvQg315G2Q', 'Bruce', 'Wayne', '111-22-3333', '1007 Mountain Dr, Gotham', '555-0000', 'pending');
+('jdoe', '$argon2id$v=19$m=65536,t=3,p=4$UpQAaUwimrLsmG1XrIXJQw$WnoTLTDtIV7NyARC8StuAOCJSA+BXWccwVvQg315G2Q', 'John', 'Doe', '123-45-6789', '123 Main St, NY', '(717) 555-1234', 'pending'),
+('asmith', '$argon2id$v=19$m=65536,t=3,p=4$UpQAaUwimrLsmG1XrIXJQw$WnoTLTDtIV7NyARC8StuAOCJSA+BXWccwVvQg315G2Q', 'Alice', 'Smith', '987-65-4321', '456 Oak Ave, CA', '(717) 555-5678', 'pending'),
+('bwayne', '$argon2id$v=19$m=65536,t=3,p=4$UpQAaUwimrLsmG1XrIXJQw$WnoTLTDtIV7NyARC8StuAOCJSA+BXWccwVvQg315G2Q', 'Bruce', 'Wayne', '111-22-3333', '1007 Mountain Dr, Gotham', '(717) 555-0000', 'pending');
 
 -- HASHED PASSWORD IS Admin$$$
 INSERT INTO admin (admin_id, username, password) VALUES
@@ -29,6 +29,6 @@ SELECT * FROM cards;
 SELECT * FROM users;
 
 delete from cards where card_id = 13;
-update bank_accounts set balance = 0 Where user_id = 1;
+update users set status = 'approved' Where user_id = 2;
 
 SELECT c.*, concat(u.first_name,' ',u.last_name) name FROM cards c JOIN users u USING (user_id) WHERE user_id = 1;

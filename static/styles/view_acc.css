@@ -1,0 +1,55 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* --------- BACKGROUND ----------- */
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: grey;
+}
+#account-btn{
+    position: absolute;
+    top: 2.5%;
+    right: 2.5%;
+    padding: 15px;
+    border-radius: 50%;
+    background-color: darkgoldenrod;
+}
+/* ---------- ACC DETAIL CONT ---------- */
+.acc-detail-cont{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    height: 90vh;
+    width: 95%;
+    background-color: rgba(36, 36, 58, 0.855);
+    border: 5px solid black;
+    border-radius: 2rem;
+    padding: 2rem;
+    overflow-y: auto;
+    gap: 1rem;
+}
+.acc-detail-cont h3{
+    color: darkgoldenrod;
+    width: 40%;
+    text-align: left;
+}
+.acc-input{
+    width: 40%;
+    padding: 8px 10px;
+    margin-bottom: 1rem;
+}
+.submit-btns{
+    display: flex;
+    justify-content: space-between;
+    width: 15%;
+    margin: 2rem 0 3rem 0;
+}
+.admin-funcs{
+    padding: 3px 5px;
+}

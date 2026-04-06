@@ -37,14 +37,16 @@ def log_in():
             hashedAdmin = conn.execute(text('SELECT username, password FROM admin')).fetchone()
             if any(ph.verify(hp.password, data['password']) and hp.username == data['username'] for hp in hashedUsers):
                 user_id = conn.execute(text('SELECT user_id FROM users WHERE username=:username'), data).fetchone()[0]
-            elif ph.verify(hashedAdmin[1],data['password']) and hashedAdmin[0] == data['username']:
-                user_id = conn.execute(text('SELECT admin_id FROM admin WHERE username=:username'), data).fetchone()[0]
-                session['user_id'] = user_id
-                session['role'] = 'admin'
-                return redirect('/admin_page')
         except Exception:
-            flash('Password or username not recognized. Please try again', 'error')
-            return render_template('log-in.html')
+            try:
+                if ph.verify(hashedAdmin[1],data['password']) and hashedAdmin[0] == data['username']:
+                    user_id = conn.execute(text('SELECT admin_id FROM admin WHERE username=:username'), data).fetchone()[0]
+                    session['user_id'] = user_id
+                    session['role'] = 'admin'
+                    return redirect('/admin_page')
+            except Exception:
+                flash('Password or username not recognized. Please try again', 'error')
+                return render_template('log-in.html')
         status = conn.execute(text('SELECT status FROM users WHERE user_id=:user_id'), {'user_id':user_id}).fetchone()[0]
         if status == 'pending':
             return redirect('/check_status')
@@ -143,9 +145,30 @@ def send_money():
     bank_acc = conn.execute(text('SELECT * FROM bank_accounts WHERE user_id=:user_id'),{'user_id':session.get('user_id')}).fetchone()
     cards = conn.execute(text('SELECT c.*, CONCAT(u.first_name, \' \', u.last_name) AS name FROM cards AS c JOIN users AS u USING (user_id) WHERE user_id=:user_id;'),{'user_id':session.get('user_id')}).fetchall()
     return render_template('user_page.html', bank_acc=bank_acc, cards=cards)
+
+@app.route('/view_account', methods=['POST'])
+def view_account():
+    user_data = conn.execute(text('SELECT * FROM users WHERE user_id=:user_id'),{'user_id':session.get('user_id')}).fetchone()
+    return render_template('acc_details.html', user_data=user_data)
 # ------------- ADMIN PAGE ----------------
+@app.route('/admin_page')
+def admin_page():
+    users_data = conn.execute(text('SELECT * FROM users WHERE status="pending"')).fetchall()
+    return render_template('admin_page.html', users_data=users_data)
 
+@app.route('/reject_app/<int:user_id>', methods=['POST'])
+def reject(user_id):
+    conn.execute(text('DELETE FROM users WHERE user_id=:user_id'),{'user_id':user_id})
+    conn.commit()
+    return redirect('/admin_page')
 
+@app.route('/approve_app/<int:user_id>', methods=['POST'])
+def approve(user_id):
+    conn.execute(text('UPDATE users SET status = "approved" WHERE user_id=:user_id'),{'user_id':user_id})
+    conn.commit()
+    conn.execute(text('INSERT INTO bank_accounts (user_id, balance) VALUES (:user_id, 0.00)'),{'user_id':user_id})
+    conn.commit()
+    return redirect('/admin_page')
 
 
 if __name__ == '__main__':
